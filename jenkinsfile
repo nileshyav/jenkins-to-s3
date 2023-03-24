@@ -1,0 +1,17 @@
+pipeline{
+    agent any
+
+    stages{
+        stage("Aws test credentials"){
+            steps{
+                withAWS(credentials: 'jenkins-test', region: 'us-east-1'){
+                    sh 'echo "Hello India" > hello.txt'
+                    s3Upload (acl: 'Private' , bucket: 'testing-jenkins123' , file: 'hello.txt')
+                    s3Download(file:'downloaded.txt', bucket:'testing-jenkins123', path:'hello.txt',force:true) 
+                    sh "cat downloaded.txt"
+                    s3Delete(bucket:'nilesh-2023-testing', path:'index.html')
+                }
+            }
+        }
+    }
+}
